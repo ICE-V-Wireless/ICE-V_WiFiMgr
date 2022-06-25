@@ -9,5 +9,6 @@
 #include "main.h"
 
 esp_err_t wifi_init(void);
+int8_t wifi_get_rssi(void);
 
 #endif

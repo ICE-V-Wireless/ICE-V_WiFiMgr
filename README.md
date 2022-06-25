@@ -3,7 +3,7 @@ TCP Socket Firmware for ICE-V with Soft AP Provisioning
 
 ## Abstract
 This project is a friendlier version of the original ICE-V Wireless firmware
-that includes a SoftAP captive port to do the initial SSID/Password setup.
+that includes a SoftAP captive portal to do the initial SSID/Password setup.
 It supports power-on initialization of the ICE40UP5k FPGA as well as wireless
 programming of the FPGA, SPI access after configuration and battery
 voltage monitoring.
@@ -70,7 +70,22 @@ to view this information.
 Use a smartphone to attach to the HTTP server. Search for a network
 named `ice-v`. Connect using the password `ice-vpwd`. A captive portal will
 appear. Choose a network from scanned list, or enter your own. Fill in the
-password. Hit the "JOIN" button. Wait for "SUCCESS". Enjoy.
+password. Hit the "JOIN" button. Wait for "SUCCESS". If you accidentally chose
+the wrong network or mis-typed the password then the system will hang and must
+be reset to start over.
+
+### IMPORTANT
+After you see the "SUCCESS" indicator, reset the ICE-V Wireless by pressing
+the "RST" button. This is needed to restart the networking with the new
+credentials and a predictable starting state.
+
+## IP Addressing
+This firmware uses DHCP and mDNS to request an IP address from the router on the
+WiFi network and to advertise the address and its specific service/socket. If your
+system doesn't support mDNS then you'll need to query your DHCP server to
+find the IP address that it assigned to the ICE-V. Normally the device can be
+found at the mDNS alias of `ICE-V.local` and the host-side Python interface script
+defaults to using that name.
 
 ## Restarting
 You may want to erase the stored credentials. Do this:
