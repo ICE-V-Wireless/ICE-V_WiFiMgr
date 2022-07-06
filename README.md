@@ -67,17 +67,23 @@ idf.py -p <serial device> monitor
 to view this information.
 
 ## Provisioning
-Use a smartphone to attach to the HTTP server. Search for a network
+Use a smartphone to attach to the SoftAP. Search for a network
 named `ice-v`. Connect using the password `ice-vpwd`. A captive portal will
 appear. Choose a network from scanned list, or enter your own. Fill in the
 password. Hit the "JOIN" button. Wait for "SUCCESS". If you accidentally chose
-the wrong network or mis-typed the password then the system will hang and must
+the wrong network or mis-typed the password then the system may hang and should
 be reset to start over.
 
 ### IMPORTANT
 After you see the "SUCCESS" indicator, reset the ICE-V Wireless by pressing
 the "RST" button. This is needed to restart the networking with the new
 credentials and a predictable starting state.
+
+### Resetting Credentials
+If you want to clear out the network credentials for any reason you can do so
+by pressing the BOOT button on the ICE-V board for approximately 3 seconds. This
+will wipe the existing network SSID and password and force a restart into the
+SoftAP/Captive Portal to re-enter new credentials.
 
 ## IP Addressing
 This firmware uses DHCP and mDNS to request an IP address from the router on the
@@ -86,9 +92,3 @@ system doesn't support mDNS then you'll need to query your DHCP server to
 find the IP address that it assigned to the ICE-V. Normally the device can be
 found at the mDNS alias of `ICE-V.local` and the host-side Python interface script
 defaults to using that name.
-
-### Resetting Credentials
-If you want to clear out the network credentials for any reason you can do so
-by pressing the BOOT button on the ICE-V board for approximately 3 seconds. This
-will wipe the existing network SSID and password and force a restart into the
-SoftAP/Captive Portal to re-enter new credentials.
