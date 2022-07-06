@@ -1,7 +1,7 @@
 /*
  * main.h - common includes for everything
- * part of lp4k_c3
- * 04-04-22 E. Brombaugh
+ * part of ICE-V_WiFiMgr
+ * 06-21-22 E. Brombaugh
  */
 
 #ifndef __MAIN__

@@ -84,13 +84,11 @@ esp_err_t wifi_init(void)
 		vTaskDelay(1);
 	}
 	
-#if 1
 	/* initialize mDNS service */
     ESP_ERROR_CHECK( mdns_init() );
 	ESP_ERROR_CHECK( mdns_hostname_set("ICE-V") );
 	ESP_ERROR_CHECK( mdns_instance_name_set("ESP32C3 + FPGA") );
     ESP_ERROR_CHECK( mdns_service_add(NULL, "_FPGA", "_tcp", 3333, NULL, 0)  );
-#endif
 	
 	/* whatever else you want running on top of WiFi */
 	ESP_LOGI(TAG, "Setting up TCP socket server.");
@@ -107,4 +105,42 @@ int8_t wifi_get_rssi(void)
 	wifi_ap_record_t ap;
 	esp_wifi_sta_get_ap_info(&ap);
 	return ap.rssi;
+}
+
+/* this is defined in the WiFi Manager component */
+extern const char wifi_manager_nvs_namespace[];
+
+/*
+ * reset WiFi credentials
+ */
+void wifi_reset_credentials(void)
+{
+	nvs_handle handle;
+	esp_err_t esp_err;
+	
+	/* shut down WiFi manager to avoid nvs conflicts */
+	wifi_manager_destroy();
+
+	/* get access to the WiFi_manager NVS namespace */
+	esp_err = nvs_open(wifi_manager_nvs_namespace, NVS_READWRITE, &handle);
+	if (esp_err != ESP_OK)
+	{
+		ESP_LOGW(TAG, "Couldn't open NVS namespace to clear keys.");
+		return;
+	}
+	
+	/* erase all the keys in the namespace */
+	esp_err = nvs_erase_all(handle);
+	if(esp_err != ESP_OK)
+	{
+		ESP_LOGW(TAG, "Erase All failed.");
+	}
+	
+	/* commit changes */
+	esp_err = nvs_commit(handle);
+	if(esp_err != ESP_OK)
+	{
+		ESP_LOGW(TAG, "Commit failed.");
+	}
+	nvs_close(handle);
 }

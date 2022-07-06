@@ -87,11 +87,8 @@ find the IP address that it assigned to the ICE-V. Normally the device can be
 found at the mDNS alias of `ICE-V.local` and the host-side Python interface script
 defaults to using that name.
 
-## Restarting
-You may want to erase the stored credentials. Do this:
-
-```
-idf.py -p /dev/ttyACM0 erase-flash
-```
-
-Then re-install as above.
+### Resetting Credentials
+If you want to clear out the network credentials for any reason you can do so
+by pressing the BOOT button on the ICE-V board for approximately 3 seconds. This
+will wipe the existing network SSID and password and force a restart into the
+SoftAP/Captive Portal to re-enter new credentials.

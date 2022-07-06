@@ -1,7 +1,7 @@
 /*
  * main.c - top level
- * part of lp4k_c3
- * 04-04-22 E. Brombaugh
+ * part of ICE-V_WiFiMgr
+ * 06-21-22 E. Brombaugh
 */
 
 #include "main.h"
@@ -16,6 +16,7 @@
 #include <esp_netif.h>
 #include "wifi_manager.h"
 
+#define BOOT_PIN 9
 #define LED_PIN 10
 
 static const char* TAG = "main";
@@ -28,6 +29,57 @@ const char *cfg_file = "/spiffs/bitstream.bin";
 const char *bdate = __DATE__;
 const char *btime = __TIME__;
 
+/*
+ * Boot checker
+ */
+void boot_task(void *pvParameters)
+{
+	uint8_t boot_state, curr_boot_state;
+	uint32_t boot_time = 0;
+	
+	/* set up BOOT button GPIO */
+	gpio_set_direction(BOOT_PIN, GPIO_MODE_INPUT);
+	gpio_set_pull_mode(BOOT_PIN, GPIO_PULLUP_ONLY);
+	
+	/* wait for boot button released */
+	vTaskDelay(1);
+	while((boot_state = gpio_get_level(BOOT_PIN))==0)
+	{
+		vTaskDelay(1);
+	}
+	
+	/* loop while checking */
+	while(1)
+	{
+		/* check for changes */
+		curr_boot_state = gpio_get_level(BOOT_PIN);
+		if(curr_boot_state != boot_state)
+		{
+			boot_state = curr_boot_state;
+			boot_time = 0;
+			ESP_LOGI(TAG, "Boot State: %d", boot_state);
+		}
+		
+		/* check for 3 second press */
+		if((boot_state == 0) && (boot_time > 3000))
+		{
+			ESP_LOGI(TAG, "Boot Button Held for >= 3sec: Clearing WiFi credentials.");
+			boot_time = 0;
+			wifi_reset_credentials();
+			
+			ESP_LOGI(TAG, "Restarting...");
+			esp_restart();
+		}
+		
+		/* count time */
+		boot_time += portTICK_PERIOD_MS;
+		vTaskDelay(1);
+	}
+}
+
+/*
+ * Main!
+ */
 void app_main(void)
 {
 	/* Startup */
@@ -71,16 +123,16 @@ void app_main(void)
 	else
 		ESP_LOGE(TAG, "WiFi Init Failed");
 	
-	/* wait here forever and blink */
-    ESP_LOGI(TAG, "Looping...", btime);
+	/* start checking BOOT pin for 3 sec push */
+	xTaskCreate(boot_task, "boot", 2048, NULL, 4, NULL);
+	
+	/* wait here forever blinking */
+    ESP_LOGI(TAG, "Looping...");
 	gpio_set_direction(LED_PIN, GPIO_MODE_OUTPUT);
-	uint8_t i = 0;
+	int8_t i=0;
 	while(1)
 	{
-		gpio_set_level(LED_PIN, i);
-		//printf("%d\n", i);
-		printf("Vbat = %d mV\n", 2*adc_c3_get());
-		i^=1;
+		gpio_set_level(LED_PIN, (i++)&1);
 		vTaskDelay(1000 / portTICK_PERIOD_MS);
 	}
 }
