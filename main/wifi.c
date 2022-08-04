@@ -62,10 +62,12 @@ esp_err_t wifi_init(void)
 {
 	esp_err_t ret = ESP_OK;
 		
-	/* prevent USB shutdown */
+#if 0
+	/* prevent USB shutdown - Only works in V5.0+ */
 	ESP_LOGI(TAG, "Preventing USB disable.");
 	phy_bbpll_en_usb(true);
-
+#endif
+	
 	/* start the wifi manager */
 	ESP_LOGI(TAG, "Starting WiFi Manager.");
 	wifi_manager_start();
