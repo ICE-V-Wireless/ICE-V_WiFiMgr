@@ -23,6 +23,14 @@
 #include "socket.h"
 #include "mdns.h"
 
+#include "esp_idf_version.h"
+
+#if ESP_IDF_VERSION < ESP_IDF_VERSION_VAL(4, 4, 2)
+// there's an include for this but it doesn't define the function
+// if it doesn't think it needs it, so manually declare the function
+extern void phy_bbpll_en_usb(bool en);
+#endif
+
 static const char *TAG = "wifi";
 
 /******************************************************************************/
@@ -61,12 +69,10 @@ void cb_disconnected(void *pvParameter){
 esp_err_t wifi_init(void)
 {
 	esp_err_t ret = ESP_OK;
-		
-#if 0
+	
 	/* prevent USB shutdown - Only works in V5.0+ */
 	ESP_LOGI(TAG, "Preventing USB disable.");
 	phy_bbpll_en_usb(true);
-#endif
 	
 	/* start the wifi manager */
 	ESP_LOGI(TAG, "Starting WiFi Manager.");

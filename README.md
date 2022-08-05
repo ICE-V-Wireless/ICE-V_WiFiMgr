@@ -16,11 +16,11 @@ Espressif ESP32 IDF toolchain. Unfortunately there are many different versions
 available and not all components and features used here are compatible across
 them all. This project was initially built against an intermediate release of
 unstable V5.0 and the most recent V5.0 no longer supports the WiFi Manager
-component so it's best to fall back to the V4.4.1. You can find it here:
+component so it's best to fall back to the V4.4.2. You can find it here:
 
 https://github.com/espressif/esp-idf
 
-Make sure you get `(stable)V4.4.1` and that you've done all the proper
+Make sure you get `stable (V4.4.2)` and that you've done all the proper
 installation and setup steps.
 
 ### Components
@@ -73,11 +73,11 @@ idf.py -p <serial device> monitor
   
 to view this information.
 
-NOTE: For ESP-IDF V4.4.1 the boot-up firmware automatically disables the USB
+NOTE: For ESP-IDF V4.4.1 on, the boot-up firmware automatically disables the USB
 serial port that's used for monitoring, so this feature will only show you the
-first few lines of the boot-up process. ESP-IDF V5.0 added the ability to
-prevent disabling USB but function call is not available in V4.4.1 so it's been
-turned off with preprocessor macros in the `main/wifi.c` file.
+first few lines of the boot-up process. Starting at some point in ESP-IDF V4.4.1
+the ability to prevent disabling USB was added but is not available in earlier
+versions so it's important to use the latest stable version of ESP-IDF V4.4.x
 
 ## Provisioning
 Use a smartphone to attach to the SoftAP. Search for a network
